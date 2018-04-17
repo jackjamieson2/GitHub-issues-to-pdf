@@ -9,13 +9,16 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 
 
-# repository to fetch from (e.g. jackjamieson2/GitHub-issues-to-pdf)
+# OPTIONS:
+
+# Repository to fetch from (e.g. jackjamieson2/GitHub-issues-to-pdf)
 repository = 'jackjamieson2/yarns-indie-reader'
 
+# Output directory to save PDFs
 output_dir = 'Exported PDFs/' + repository + "/"
 
-#Options
-generate_auto_tags = True   # True/False. If true will add automatically generated tags to 
+# Generate automatic tags  (True/False)
+generate_auto_tags = True   # If true will add automatically generated tags to 
                             # bottom of the PDF in the form ##[tag]. See autotags() function for details
                         
 
