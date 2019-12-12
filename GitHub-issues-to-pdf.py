@@ -7,6 +7,8 @@ from datetime import datetime
 
 # OPTIONS:
 
+instance = 'github.com'
+headers = {'Cookie':''}
 
 # Repository to fetch from (e.g. jackjamieson2/GitHub-issues-to-pdf)
 repository = 'jackjamieson2/yarns-indie-reader'
@@ -80,7 +82,7 @@ options = {
 
 # Look up how many issues the repository has
 issue_count = 0
-r = requests.get('https://github.com/' + repository + '/issues?q=is%3Aissue')
+r = requests.get('https://' + instance + '/' + repository + '/issues?q=is%3Aissue', headers=headers)
 if r.status_code == 200:
     soup = BeautifulSoup(r.content, "lxml")
     issue = soup.find(class_="js-issue-row")
@@ -94,8 +96,8 @@ if r.status_code == 200:
     errors = []
     # Iterate through each issue page
     for i in range (1,issue_count +1):
-        url = 'https://github.com/' + repository + '/issues/' + str(i)
-        r = requests.get(url)
+        url = 'https://' + instance + '/' + repository + '/issues/' + str(i)
+        r = requests.get(url, headers=headers)
         if r.status_code == 200:
             print('\nConverting page to PDF: ' + url)
             c = r.text
@@ -107,14 +109,16 @@ if r.status_code == 200:
             html_head = str(soup.head)
             html_body = str(soup.find(class_='repohead'))
             html_body = str(html_body) + str(soup.find(id='show_issue'))
-            if generate_auto_tags == True:
-                tags = autotags(soup)
-            else:
-                tags = ""
             
-            full_html = html_head + html_body + tags
 
             try:
+                if generate_auto_tags == True:
+                    tags = autotags(soup)
+                else:
+                    tags = ""
+
+                full_html = html_head + html_body + tags
+
                 if soup.find(id='show_issue'):
                     pdfkit.from_string(full_html, output_dir +str(i) +'.pdf', options=options)
                 else:
@@ -122,21 +126,8 @@ if r.status_code == 200:
             except:
                 log_error(url)
 
-                
-                
-        elif r.status_code == 404:
-            print('\n404 not found: ' + url  )
 
-    print('\n\nFinished!\nSaved PDFs for ' + str(i) + ' issues.' )
-    print('Find your exported PDFs in ' +output_dir )
-else:
-    print("Repository not found: " + repository)
 
-            except:
-                log_error(url)
-
-                
-                
         elif r.status_code == 404:
             print('\n404 not found: ' + url  )
 
